@@ -1,0 +1,226 @@
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.exc import NoResultFound
+from app import db
+from app.models.task import Task
+from app.models.project import Project
+
+bp = Blueprint("task", __name__, url_prefix="/api/tasks")
+
+
+@bp.route("/", methods=["POST"])
+@jwt_required()
+def create_task():
+    # get request
+    data = request.get_json()
+    title = data.get("title", None)
+    description = data.get("description", None)
+    project_id = data.get("project_id", None)
+    user_id = get_jwt_identity()
+
+    # validate fileds
+    if not title or not project_id:
+        return jsonify({"message": "Title and Project_ID is required!"}), 400
+
+    """
+        Logika untuk user hanya dapat menggunakan project yang sudah dibuatnya saja
+        - Query Project filter_by user yang login (user_id)
+        - Buat array untuk menampung semua Project yang difilter
+          ambil hanya id saja
+        - Lakukan validasi untuk user, hanya dapat menggunakan project
+          yang dibuatnya saja
+    """
+
+    # get all projects generated from user
+    projects = db.session.execute(
+        db.select(Project).filter_by(user_id=user_id)
+    ).scalars()
+
+    # get all ids from projects
+    project_arr = [project.serialize() for project in projects]
+    project_id_all = []
+    for i in range(0, len(project_arr)):
+        project_id_all.append(project_arr[i]["id"])
+
+    # validate fields, can't use another user project's
+    if project_id not in project_id_all:
+        return jsonify({"message": "Don't have permission to use the project_id"}), 403
+
+    # insert into db
+    task = Task(title=title, description=description, project_id=project_id)
+    db.session.add(task)
+    db.session.commit()
+
+    return jsonify({"message": "Task successfully created"}), 201
+
+
+@bp.route("/", methods=["GET"])
+@jwt_required()
+def get_all_task():
+    # get user_id
+    user_id = get_jwt_identity()
+
+    """
+        Logika untuk mendapatkan task berdasarkan user yang login
+        - Query Project filter_by user yang login (user_id)
+        - Buat array untuk menampung semua Project yang difilter
+          ambil hanya id saja
+        - Dapatkan semua task dari id yang sudah di filter
+    """
+
+    # get all projects generated from user
+    projects = db.session.execute(
+        db.select(Project).filter_by(user_id=user_id)
+    ).scalars()
+
+    # get all ids from projects
+    project_arr = [project.serialize() for project in projects]
+    project_id_all = []
+    for i in range(0, len(project_arr)):
+        project_id_all.append(project_arr[i]["id"])
+
+    # get all tasks from filtered project id
+    task_by_project = []
+    for i in range(0, len(project_id_all)):
+        tasks = db.session.execute(
+            db.select(Task).filter_by(project_id=project_id_all[i])
+        ).scalars()
+        for task in tasks:
+            task_by_project.append(task.serialize())
+
+    return jsonify({"data": task_by_project}), 200
+
+
+@bp.route("/<int:id>", methods=["PUT"])
+@jwt_required()
+def update_task(id):
+    # get request
+    data = request.get_json()
+    title = data.get("title", None)
+    description = data.get("description", None)
+    project_id = data.get("project_id")
+    user_id = get_jwt_identity()
+
+    # validate fileds
+    if not title or not project_id:
+        return jsonify({"message": "Title and Project_ID is required!"}), 400
+
+    # handle err when task not found
+    try:
+        task = db.session.execute(db.select(Task).filter_by(id=id)).scalar_one()
+        print(task.serialize())
+    except NoResultFound:
+        return jsonify({"message": "Task not found!"}), 404
+
+    """
+        Logika untuk user hanya dapat menggunakan project dan task yang dibuatnya
+        - Query Project filter_by user yang login (user_id)
+        - Buat array untuk menampung semua Project yang difilter
+          ambil hanya id saja
+        - Lakukan validasi untuk user, hanya dapat menggunakan project
+          yang dibuatnya saja
+        - Dapatkan semua task dari dafter project yang sudah di filter_by id
+        - Dapatkan semua id task yang dibuat current user
+        - Memvalidasi url paramter, hanya dapat mengubah task yang dimiliki user 
+    """
+
+    # get all projects generated from user
+    projects = db.session.execute(
+        db.select(Project).filter_by(user_id=user_id)
+    ).scalars()
+
+    # get all ids from projects
+    project_arr = [project.serialize() for project in projects]
+    project_id_all = []
+    for i in range(0, len(project_arr)):
+        project_id_all.append(project_arr[i]["id"])
+
+    # validate fields, can't use another user project's
+    if project_id not in project_id_all:
+        return jsonify({"message": "Don't have permission to use the project_id"}), 403
+
+    # get all tasks from filtered project id
+    task_by_project = []
+    for i in range(0, len(project_id_all)):
+        tasks = db.session.execute(
+            db.select(Task).filter_by(project_id=project_id_all[i])
+        ).scalars()
+        for task_ in tasks:
+            task_by_project.append(task_.serialize())
+
+    # get all id of tasks generated from current
+    task_id_all = []
+    for i in range(0, len(task_by_project)):
+        task_id_all.append(task_by_project[i]["id"])
+
+    # validate url paramter, can't modify the task when the user doesn't have it
+    if id not in task_id_all:
+        return jsonify({"message": "Don't have permission to modify this Task"}), 403
+
+    # updating data in db
+    task.title = title
+    task.description = description
+    task.project_id = project_id
+    db.session.add(task)
+    db.session.commit()
+
+    return jsonify({"message": "Task updated successfully"}), 200
+
+
+@bp.route("/<int:id>", methods=["DELETE"])
+@jwt_required()
+def delete_project(id):
+    # get identity
+    user_id = get_jwt_identity()
+
+    # handle err when task not found
+    try:
+        task = db.session.execute(db.select(Task).filter_by(id=id)).scalar_one()
+        print(task.serialize())
+    except NoResultFound:
+        return jsonify({"message": "Task not found!"}), 404
+
+    """
+        Logika untuk user hanya dapat menghapus task yang dibuatnya
+        - Query Project filter_by user yang login (user_id)
+        - Buat array untuk menampung semua Project yang difilter
+          ambil hanya id saja
+        - Dapatkan semua task dari dafter project yang sudah di filter_by id
+        - Dapatkan semua id task yang dibuat current user
+        - Memvalidasi url paramter, hanya dapat mengubah task yang dimiliki user
+    """
+
+    # get all projects generated from user
+    projects = db.session.execute(
+        db.select(Project).filter_by(user_id=user_id)
+    ).scalars()
+
+    # get all ids from projects
+    project_arr = [project.serialize() for project in projects]
+    project_id_all = []
+    for i in range(0, len(project_arr)):
+        project_id_all.append(project_arr[i]["id"])
+
+    # get all tasks from filtered project id
+    task_by_project = []
+    for i in range(0, len(project_id_all)):
+        tasks = db.session.execute(
+            db.select(Task).filter_by(project_id=project_id_all[i])
+        ).scalars()
+        for task_ in tasks:
+            task_by_project.append(task_.serialize())
+
+    # get all id of tasks generated from current
+    task_id_all = []
+    for i in range(0, len(task_by_project)):
+        task_id_all.append(task_by_project[i]["id"])
+
+    # validate url paramter, can't modify the task when the user doesn't have it
+    if id not in task_id_all:
+        return jsonify({"message": "Don't have permission to modify this Task"}), 403
+
+    # delete data in db
+    db.session.delete(task)
+    db.session.commit()
+
+    return jsonify({"message": "Task successfully deleted!"}), 200
