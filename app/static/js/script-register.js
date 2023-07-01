@@ -35,7 +35,7 @@ registrationForm.addEventListener("submit", function (event) {
     xhr.open("POST", BASE_URL + "/api/auth/register");
 
     xhr.addEventListener("load", function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
+      if (xhr.status === 200) {
         // Initialize success toast
         const toastLiveSuccess = document.getElementById("toastLiveSuccess");
         const toastBodySuccess = document.getElementById("toastBodySuccess");

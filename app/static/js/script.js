@@ -14,17 +14,16 @@ logout.addEventListener("click", function (event) {
   const xhr = new XMLHttpRequest();
   xhr.open("DELETE", BASE_URL + "/api/auth/logout");
   xhr.addEventListener("load", function () {
-    if (xhr.status === 200 && xhr.readyState === 4) {
+    if (xhr.status === 200) {
       localStorage.removeItem("accessToken");
       window.location.replace(BASE_URL + "/login");
     } else {
-      const toastLiveDanger = document.getElementById("toastLiveDanger");
-      const toastBodyDanger = document.getElementById("toastBodyDanger");
-      const toastBootstrapDanger =
-        bootstrap.Toast.getOrCreateInstance(toastLiveDanger);
+      const toastLive = document.getElementById("toastLive");
+      const toastBody = document.getElementById("toastBody");
+      const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLive);
 
-      toastBodyDanger.innerHTML = "Oops! Something went wrong";
-      toastBootstrapDanger.show();
+      toastBody.innerHTML = "Oops! Something went wrong";
+      toastBootstrap.show();
     }
   });
   xhr.setRequestHeader(

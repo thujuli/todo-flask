@@ -28,7 +28,7 @@ loginForm.addEventListener("submit", function (event) {
     xhr.open("POST", BASE_URL + "/api/auth/login");
 
     xhr.addEventListener("load", function () {
-      if (xhr.status === 200 && xhr.readyState === 4) {
+      if (xhr.status === 200) {
         // get access token and store to local storage
         const response = JSON.parse(xhr.responseText);
         localStorage.setItem("accessToken", response.access_token);
