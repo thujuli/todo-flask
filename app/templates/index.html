@@ -14,7 +14,7 @@ content %}
 <!-- section todo start -->
 <section class="container mt-3">
   <div class="row">
-    <div class="col card pt-3 px-3 mx-3" id="todo-item">
+    <div class="col card pt-3 px-3 mx-3" id="todoItem">
       <h2>TODO</h2>
       <!-- <div class="d-flex flex-column"> -->
       <!--   <div class="card mb-3"> -->
@@ -37,7 +37,7 @@ content %}
       <!--   </div> -->
       <!-- </div> -->
     </div>
-    <div class="col card pt-3 px-3 mx-3" id="done-item">
+    <div class="col card pt-3 px-3 mx-3" id="doneItem">
       <h2>DONE</h2>
     </div>
   </div>
@@ -71,24 +71,24 @@ content %}
         ></button>
       </div>
       <div class="modal-body">
-        <form action="#">
+        <form id="formAddTask">
           <div class="mb-3">
-            <label for="add-task-title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="add-task-title" />
+            <label for="addTaskTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="addTaskTitle" />
           </div>
           <div class="mb-3">
-            <select class="form-select">
+            <select class="form-select" id="selectProject">
               <option selected>Select Project</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
+              <!-- <option value="1">One</option> -->
+              <!-- <option value="2">Two</option> -->
+              <!-- <option value="3">Three</option> -->
             </select>
           </div>
           <div class="mb-3">
-            <label for="add-desc-task" class="form-label">Description</label>
+            <label for="addTaskDesc" class="form-label">Description</label>
             <textarea
               class="form-control"
-              id="add-desc-task"
+              id="addTaskDesc"
               rows="3"
             ></textarea>
           </div>
