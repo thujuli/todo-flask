@@ -108,7 +108,6 @@ def update_task(id):
     # handle err when task not found
     try:
         task = db.session.execute(db.select(Task).filter_by(id=id)).scalar_one()
-        print(task.serialize())
     except NoResultFound:
         return jsonify({"message": "Task not found!"}), 404
 
@@ -176,7 +175,6 @@ def delete_project(id):
     # handle err when task not found
     try:
         task = db.session.execute(db.select(Task).filter_by(id=id)).scalar_one()
-        print(task.serialize())
     except NoResultFound:
         return jsonify({"message": "Task not found!"}), 404
 

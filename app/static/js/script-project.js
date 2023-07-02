@@ -34,11 +34,13 @@ window.addEventListener("load", function () {
         btnEdit.setAttribute("data-bs-target", "#modalEditProject");
         btnEdit.setAttribute("data-title", response.data[i].title);
         btnEdit.setAttribute("data-description", response.data[i].description);
+        btnEdit.setAttribute("data-id", response.data[i].id);
         btnEdit.innerHTML = "EDIT";
         btnDelete.setAttribute("class", "btn btn-danger mx-1");
         btnDelete.setAttribute("type", "button");
         btnDelete.setAttribute("data-bs-toggle", "modal");
         btnDelete.setAttribute("data-bs-target", "#modalDeleteProject");
+        btnDelete.setAttribute("data-id", response.data[i].id);
         btnDelete.innerHTML = "DELETE";
 
         // append
@@ -94,9 +96,7 @@ formAddProject.addEventListener("submit", function (event) {
       modalBoostrapAdd.toggle();
       window.location.reload();
     } else {
-      const response = JSON.parse(xhr.responseText);
-
-      toastBodyAdd.innerHTML = response.message;
+      toastBodyAdd.innerHTML = "Oops! Something went wrong";
       toastBootstrapAdd.show();
     }
   });
@@ -108,6 +108,9 @@ formAddProject.addEventListener("submit", function (event) {
   xhr.send(data);
 });
 
+// variable to storage id from data-id
+let projectId;
+
 // get value from button edit
 const modalEditProject = document.getElementById("modalEditProject");
 const editProjectTitle = document.getElementById("editProjectTitle");
@@ -118,9 +121,83 @@ modalEditProject.addEventListener("shown.bs.modal", function (event) {
   editProjectTitle.value = event.relatedTarget.attributes["data-title"].value;
   editProjectDesc.value =
     event.relatedTarget.attributes["data-description"].value;
+  projectId = event.relatedTarget.attributes["data-id"].value;
 });
 
+// edit project
 const formEditProject = document.getElementById("formEditProject");
 formEditProject.addEventListener("submit", function (event) {
   event.preventDefault();
+  const toastLiveEdit = document.getElementById("toastLiveEdit");
+  const toastBodyEdit = document.getElementById("toastBodyEdit");
+  const toastBootstrapEdit = bootstrap.Toast.getOrCreateInstance(toastLiveEdit);
+
+  if (!editProjectTitle.value) {
+    toastBodyEdit.innerHTML = "Title is required!";
+    toastBootstrapEdit.show();
+  }
+
+  const data = JSON.stringify({
+    title: editProjectTitle.value,
+    description: editProjectDesc.value,
+  });
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `${BASE_URL}/api/projects/${projectId}`);
+
+  xhr.addEventListener("load", function () {
+    if (xhr.status === 200) {
+      const modalBoostrapEdit =
+        bootstrap.Modal.getOrCreateInstance(modalEditProject);
+      modalBoostrapEdit.toggle();
+      window.location.reload();
+    } else {
+      toastBodyEdit.innerHTML = "Oops! Something went wrong";
+      toastBootstrapEdit.show();
+    }
+  });
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader(
+    "Authorization",
+    "Bearer " + localStorage.getItem("accessToken")
+  );
+  xhr.send(data);
+});
+
+// get value from button delete
+const modalDeleteProject = document.getElementById("modalDeleteProject");
+modalDeleteProject.addEventListener("shown.bs.modal", function (event) {
+  event.preventDefault();
+  projectId = event.relatedTarget.attributes["data-id"].value;
+});
+
+// delete project
+const btnDeleteProject = document.getElementById("btnDeleteProject");
+btnDeleteProject.addEventListener("click", function (event) {
+  event.preventDefault();
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("DELETE", `${BASE_URL}/api/projects/${projectId}`);
+  xhr.addEventListener("load", function () {
+    if (xhr.status === 200) {
+      const modalBoostrapDelete =
+        bootstrap.Modal.getOrCreateInstance(modalDeleteProject);
+      modalBoostrapDelete.toggle();
+      window.location.reload();
+    } else {
+      const toastLiveDelete = document.getElementById("toastLiveDelete");
+      const toastBodyDelete = document.getElementById("toastBodyDelete");
+      const toastBootstrapDelete =
+        bootstrap.Toast.getOrCreateInstance(toastLiveDelete);
+
+      toastBodyDelete.innerHTML = "Oops! Something went wrong";
+      toastBootstrapDelete.show();
+    }
+  });
+  xhr.setRequestHeader(
+    "Authorization",
+    "Bearer " + localStorage.getItem("accessToken")
+  );
+  xhr.send();
 });
