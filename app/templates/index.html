@@ -3,7 +3,7 @@ content %}
 <!-- section select-project start -->
 <section class="container mt-5">
   <select class="form-select" aria-label="Default select example">
-    <option selected>Select Project</option>
+    <option value="">Select Project</option>
     <option value="1">One</option>
     <option value="2">Two</option>
     <option value="3">Three</option>
@@ -18,7 +18,9 @@ content %}
       <h2>TODO</h2>
       <!-- <div class="d-flex flex-column"> -->
       <!--   <div class="card mb-3"> -->
-      <!--     <h5 class="card-header">Featured</h5> -->
+              <!-- <div class="card-header d-flex justify-content-between p-2"> -->
+              <!--   <h5 class="mb-0">Featured</h5> -->
+              <!--   <h5 class="badge text-bg-info mb-0">Project A</h5> -->
       <!--     <div class="card-body"> -->
       <!--       <p class="card-text"> -->
       <!--         With supporting text below as a natural lead-in to additional -->
@@ -88,9 +90,6 @@ content %}
           <div class="mb-3">
             <select class="form-select" id="selectProject">
               <option value="">Select Project</option>
-              <!-- <option value="1">One</option> -->
-              <!-- <option value="2">Two</option> -->
-              <!-- <option value="3">Three</option> -->
             </select>
           </div>
           <div class="mb-3">
@@ -122,6 +121,15 @@ content %}
 <div class="modal fade" id="modalEditTask" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
+      <!-- toast danger start -->
+      <div class="toast align-items-center text-bg-danger position-fixed end-0 top-0" role="alert" aria-live="assertive" aria-atomic="true" id="toastLiveEdit">
+        <div class="d-flex">
+          <div class="toast-body" id="toastBodyEdit">
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+      <!-- toast danger end -->
       <div class="modal-header">
         <h1 class="modal-title fs-5">Edit New Task</h1>
         <button
@@ -132,24 +140,21 @@ content %}
         ></button>
       </div>
       <div class="modal-body">
-        <form action="#">
+        <form id="formEditTask">
           <div class="mb-3">
-            <label for="edit-task-title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="edit-task-title" />
+            <label for="editTaskTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="editTaskTitle" />
           </div>
           <div class="mb-3">
-            <select class="form-select">
-              <option selected>Select Project</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
+            <select class="form-select" id="editSelectedProject">
+              <option value="">Select Project</option>
             </select>
           </div>
           <div class="mb-3">
-            <label for="edit-desc-task" class="form-label">Description</label>
+            <label for="editTaskDesc" class="form-label">Description</label>
             <textarea
               class="form-control"
-              id="edit-desc-task"
+              id="editTaskDesc"
               rows="3"
             ></textarea>
           </div>

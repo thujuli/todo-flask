@@ -63,7 +63,9 @@ window.addEventListener("load", function () {
       for (let i = 0; i < response.length; i++) {
         const cardWrap = document.createElement("div");
         const card = document.createElement("div");
-        const cardHeader = document.createElement("h5");
+        const cardHeader = document.createElement("div");
+        const cardTitle = document.createElement("h5");
+        const selectedProject = document.createElement("h5");
         const cardBody = document.createElement("div");
         const cardText = document.createElement("p");
         const btnWrap = document.createElement("div");
@@ -74,8 +76,13 @@ window.addEventListener("load", function () {
         // Set Attribute
         cardWrap.setAttribute("class", "d-flex flex-column");
         card.setAttribute("class", "card mb-3");
-        cardHeader.setAttribute("class", "card-header");
-        cardHeader.innerHTML = response[i].title;
+        cardHeader.setAttribute(
+          "class",
+          "card-header d-flex justify-content-between"
+        );
+        cardTitle.setAttribute("class", "mb-0");
+        cardTitle.innerHTML = response[i].title;
+        selectedProject.setAttribute("class", "badge text-bg-info mb-0");
         cardBody.setAttribute("class", "card-body");
         cardText.setAttribute("class", "card-text");
         cardText.innerHTML = response[i].description;
@@ -84,6 +91,9 @@ window.addEventListener("load", function () {
         btnEdit.setAttribute("type", "button");
         btnEdit.setAttribute("data-bs-toggle", "modal");
         btnEdit.setAttribute("data-bs-target", "#modalEditTask");
+        btnEdit.setAttribute("data-title", response[i].title);
+        btnEdit.setAttribute("data-description", response[i].description);
+        btnEdit.setAttribute("data-id", response[i].id);
         btnEdit.innerHTML = "EDIT";
         btnDelete.setAttribute("class", "btn btn-danger mx-1");
         btnDelete.setAttribute("type", "button");
@@ -98,10 +108,19 @@ window.addEventListener("load", function () {
         btnWrap.appendChild(btnDone);
         cardBody.appendChild(cardText);
         cardBody.appendChild(btnWrap);
+        cardHeader.appendChild(cardTitle);
+        cardHeader.appendChild(selectedProject);
         card.appendChild(cardHeader);
         card.appendChild(cardBody);
         cardWrap.appendChild(card);
 
+        // get project title from localStorage
+        const projects = JSON.parse(localStorage.getItem("projects")).data;
+        for (let x = 0; x < projects.length; x++) {
+          if (response[i].project_id == projects[x].id) {
+            selectedProject.innerHTML = projects[x].title;
+          }
+        }
         // logic for finish and unfinish the task
         if (response[i].is_done) {
           btnDone.setAttribute("class", "btn btn-warning mx-1");
@@ -144,6 +163,7 @@ modalAddTask.addEventListener("shown.bs.modal", function (event) {
   }
 });
 
+// handle api for create new task
 const formAddTask = document.getElementById("formAddTask");
 formAddTask.addEventListener("submit", function (event) {
   event.preventDefault();
@@ -167,8 +187,6 @@ formAddTask.addEventListener("submit", function (event) {
     description: addTaskDesc,
   });
 
-  console.log(data);
-
   const xhr = new XMLHttpRequest();
   xhr.open("POST", BASE_URL + "/api/tasks");
   xhr.addEventListener("load", function () {
@@ -183,6 +201,83 @@ formAddTask.addEventListener("submit", function (event) {
       const response = JSON.parse(xhr.responseText);
       toastBodyAdd.innerHTML = response.message;
       toastBootstrapAdd.show();
+    }
+  });
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader(
+    "Authorization",
+    "Bearer " + localStorage.getItem("accessToken")
+  );
+  xhr.send(data);
+});
+
+// get data from button edit
+const modalEditTask = document.getElementById("modalEditTask");
+firstTime = true;
+let projectId;
+modalEditTask.addEventListener("shown.bs.modal", function (event) {
+  event.preventDefault();
+  const editTaskTitle = document.getElementById("editTaskTitle");
+  const editTaskDesc = document.getElementById("editTaskDesc");
+
+  const editSelectedProject = document.getElementById("editSelectedProject");
+  const projects = JSON.parse(localStorage.getItem("projects")).data;
+
+  // event tiggered just first click
+  if (firstTime) {
+    firstTime = false;
+    for (let i = 0; i < projects.length; i++) {
+      const option = document.createElement("option");
+      option.setAttribute("value", projects[i].id);
+      option.text = projects[i].title;
+
+      editSelectedProject.options.add(option);
+    }
+  }
+
+  editTaskTitle.value = event.relatedTarget.attributes["data-title"].value;
+  editTaskDesc.value = event.relatedTarget.attributes["data-description"].value;
+  projectId = event.relatedTarget.attributes["data-id"].value;
+});
+
+// handle api for edit task
+const formEditTask = document.getElementById("formEditTask");
+formEditTask.addEventListener("submit", function (event) {
+  event.preventDefault();
+  const editTaskTitle = document.getElementById("editTaskTitle").value;
+  const editTaskDesc = document.getElementById("editTaskDesc").value;
+  const editSelectedProject = document.getElementById(
+    "editSelectedProject"
+  ).value;
+
+  const toastLiveEdit = document.getElementById("toastLiveEdit");
+  const toastBodyEdit = document.getElementById("toastBodyEdit");
+  const toastBootstrapEdit = bootstrap.Toast.getOrCreateInstance(toastLiveEdit);
+
+  if (!editTaskTitle || !editSelectedProject) {
+    toastBodyEdit.innerHTML = "Title and Select Project cannot be empty!";
+    toastBootstrapEdit.show();
+    return;
+  }
+
+  const data = JSON.stringify({
+    title: editTaskTitle,
+    description: editTaskDesc,
+    project_id: parseInt(editSelectedProject),
+  });
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("PUT", `${BASE_URL}/api/tasks/${projectId}`);
+  xhr.addEventListener("load", function () {
+    if (xhr.status === 200) {
+      const modalBoostrapEdit =
+        bootstrap.Modal.getOrCreateInstance(modalEditTask);
+      modalBoostrapEdit.toggle();
+      window.location.reload();
+    } else {
+      const response = JSON.parse(xhr.responseText);
+      toastBodyEdit.innerHTML = response.message;
+      toastBootstrapEdit.show();
     }
   });
   xhr.setRequestHeader("Content-Type", "application/json");

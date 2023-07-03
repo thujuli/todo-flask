@@ -150,10 +150,10 @@ let projectId;
 
 // get value from button edit
 const modalEditProject = document.getElementById("modalEditProject");
-const editProjectTitle = document.getElementById("editProjectTitle");
-const editProjectDesc = document.getElementById("editProjectDesc");
 modalEditProject.addEventListener("shown.bs.modal", function (event) {
   event.preventDefault();
+  const editProjectTitle = document.getElementById("editProjectTitle");
+  const editProjectDesc = document.getElementById("editProjectDesc");
 
   editProjectTitle.value = event.relatedTarget.attributes["data-title"].value;
   editProjectDesc.value =
@@ -165,19 +165,22 @@ modalEditProject.addEventListener("shown.bs.modal", function (event) {
 const formEditProject = document.getElementById("formEditProject");
 formEditProject.addEventListener("submit", function (event) {
   event.preventDefault();
+  const editProjectTitle = document.getElementById("editProjectTitle").value;
+  const editProjectDesc = document.getElementById("editProjectDesc").value;
+
   const toastLiveEdit = document.getElementById("toastLiveEdit");
   const toastBodyEdit = document.getElementById("toastBodyEdit");
   const toastBootstrapEdit = bootstrap.Toast.getOrCreateInstance(toastLiveEdit);
 
-  if (!editProjectTitle.value) {
+  if (!editProjectTitle) {
     toastBodyEdit.innerHTML = "Title is required!";
     toastBootstrapEdit.show();
     return;
   }
 
   const data = JSON.stringify({
-    title: editProjectTitle.value,
-    description: editProjectDesc.value,
+    title: editProjectTitle,
+    description: editProjectDesc,
   });
 
   const xhr = new XMLHttpRequest();
