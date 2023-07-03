@@ -90,7 +90,7 @@ window.addEventListener("load", function () {
         btnEdit.setAttribute("class", "btn btn-primary mx-1");
         btnEdit.setAttribute("type", "button");
         btnEdit.setAttribute("data-bs-toggle", "modal");
-        btnEdit.setAttribute("data-bs-target", "#modalEditTask");
+        btnEdit.setAttribute("data-bs-target", "#modalTaskEdit");
         btnEdit.setAttribute("data-title", response[i].title);
         btnEdit.setAttribute("data-description", response[i].description);
         btnEdit.setAttribute("data-id", response[i].id);
@@ -98,7 +98,8 @@ window.addEventListener("load", function () {
         btnDelete.setAttribute("class", "btn btn-danger mx-1");
         btnDelete.setAttribute("type", "button");
         btnDelete.setAttribute("data-bs-toggle", "modal");
-        btnDelete.setAttribute("data-bs-target", "#modalDeleteTask");
+        btnDelete.setAttribute("data-bs-target", "#modalTaskDelete");
+        btnDelete.setAttribute("data-id", response[i].id);
         btnDelete.innerHTML = "DELETE";
         btnDone.setAttribute("type", "button");
 
@@ -142,9 +143,9 @@ window.addEventListener("load", function () {
 });
 
 // show add modal and fill option value
-const modalAddTask = document.getElementById("modalAddTask");
+const modalTaskAdd = document.getElementById("modalTaskAdd");
 let firstTime = true;
-modalAddTask.addEventListener("shown.bs.modal", function (event) {
+modalTaskAdd.addEventListener("shown.bs.modal", function (event) {
   event.preventDefault();
 
   const selectProject = document.getElementById("selectProject");
@@ -192,7 +193,7 @@ formAddTask.addEventListener("submit", function (event) {
   xhr.addEventListener("load", function () {
     if (xhr.status === 201) {
       const modalBoostrapAdd =
-        bootstrap.Modal.getOrCreateInstance(modalAddTask);
+        bootstrap.Modal.getOrCreateInstance(modalTaskAdd);
 
       formAddTask.reset();
       modalBoostrapAdd.toggle();
@@ -212,10 +213,10 @@ formAddTask.addEventListener("submit", function (event) {
 });
 
 // get data from button edit
-const modalEditTask = document.getElementById("modalEditTask");
+const modalTaskEdit = document.getElementById("modalTaskEdit");
 firstTime = true;
-let projectId;
-modalEditTask.addEventListener("shown.bs.modal", function (event) {
+let taskId;
+modalTaskEdit.addEventListener("shown.bs.modal", function (event) {
   event.preventDefault();
   const editTaskTitle = document.getElementById("editTaskTitle");
   const editTaskDesc = document.getElementById("editTaskDesc");
@@ -237,7 +238,7 @@ modalEditTask.addEventListener("shown.bs.modal", function (event) {
 
   editTaskTitle.value = event.relatedTarget.attributes["data-title"].value;
   editTaskDesc.value = event.relatedTarget.attributes["data-description"].value;
-  projectId = event.relatedTarget.attributes["data-id"].value;
+  taskId = event.relatedTarget.attributes["data-id"].value;
 });
 
 // handle api for edit task
@@ -267,11 +268,11 @@ formEditTask.addEventListener("submit", function (event) {
   });
 
   const xhr = new XMLHttpRequest();
-  xhr.open("PUT", `${BASE_URL}/api/tasks/${projectId}`);
+  xhr.open("PUT", `${BASE_URL}/api/tasks/${taskId}`);
   xhr.addEventListener("load", function () {
     if (xhr.status === 200) {
       const modalBoostrapEdit =
-        bootstrap.Modal.getOrCreateInstance(modalEditTask);
+        bootstrap.Modal.getOrCreateInstance(modalTaskEdit);
       modalBoostrapEdit.toggle();
       window.location.reload();
     } else {
@@ -286,6 +287,42 @@ formEditTask.addEventListener("submit", function (event) {
     "Bearer " + localStorage.getItem("accessToken")
   );
   xhr.send(data);
+});
+
+const modalTaskDelete = document.getElementById("modalTaskDelete");
+modalTaskDelete.addEventListener("shown.bs.modal", function (event) {
+  event.preventDefault();
+  taskId = event.relatedTarget.attributes["data-id"].value;
+});
+
+const btnTaskDelete = document.getElementById("btnTaskDelete");
+btnTaskDelete.addEventListener("click", function (event) {
+  event.preventDefault();
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("DELETE", `${BASE_URL}/api/tasks/${taskId}`);
+  xhr.addEventListener("load", function () {
+    if (xhr.status === 200) {
+      const modalBoostrapDelete =
+        bootstrap.Modal.getOrCreateInstance(modalTaskDelete);
+      modalBoostrapDelete.toggle();
+      window.location.reload();
+    } else {
+      const response = JSON.parse(xhr.responseText);
+      const toastLiveDelete = document.getElementById("toastLiveDelete");
+      const toastBodyDelete = document.getElementById("toastBodyDelete");
+      const toastBootstrapDelete =
+        bootstrap.Toast.getOrCreateInstance(toastLiveDelete);
+
+      toastBodyDelete.innerHTML = response.message;
+      toastBootstrapDelete.show();
+    }
+  });
+  xhr.setRequestHeader(
+    "Authorization",
+    "Bearer " + localStorage.getItem("accessToken")
+  );
+  xhr.send();
 });
 
 // time func

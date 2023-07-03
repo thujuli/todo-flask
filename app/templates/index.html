@@ -52,7 +52,7 @@ content %}
     class="btn btn-success"
     type="button"
     data-bs-toggle="modal"
-    data-bs-target="#modalAddTask"
+    data-bs-target="#modalTaskAdd"
   >
     ADD
   </button>
@@ -60,7 +60,7 @@ content %}
 <!-- section add-button end -->
 
 <!-- modal add-task start -->
-<div class="modal fade" id="modalAddTask" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalTaskAdd" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <!-- toast danger start -->
@@ -118,7 +118,7 @@ content %}
 <!-- modal add-task end -->
 
 <!-- modal edit-task start -->
-<div class="modal fade" id="modalEditTask" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalTaskEdit" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <!-- toast danger start -->
@@ -176,9 +176,19 @@ content %}
 <!-- modal edit-task end -->
 
 <!-- modal delete-task start -->
-<div class="modal fade" id="modalDeleteTask" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalTaskDelete" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
+      <!-- toast danger start -->
+      <div class="toast align-items-center text-bg-danger position-fixed end-0 top-0" role="alert" aria-live="assertive" aria-atomic="true" id="toastLiveDelete">
+        <div class="d-flex">
+          <div class="toast-body" id="toastBodyDelete">
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+      <!-- toast danger end -->
+
       <div class="modal-header">
         <h1 class="modal-title fs-5">WARNING!</h1>
         <button
@@ -198,7 +208,7 @@ content %}
           >
             Close
           </button>
-          <button type="button" class="btn btn-danger">Delete Task</button>
+          <button type="button" class="btn btn-danger" id="btnTaskDelete">Delete Task</button>
         </div>
       </div>
     </div>
