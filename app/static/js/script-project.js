@@ -66,7 +66,7 @@ window.addEventListener("load", function () {
         btnEdit.setAttribute("class", "btn btn-primary mx-1");
         btnEdit.setAttribute("type", "button");
         btnEdit.setAttribute("data-bs-toggle", "modal");
-        btnEdit.setAttribute("data-bs-target", "#modalEditProject");
+        btnEdit.setAttribute("data-bs-target", "#modalProjectEdit");
         btnEdit.setAttribute("data-title", response.data[i].title);
         btnEdit.setAttribute("data-description", response.data[i].description);
         btnEdit.setAttribute("data-id", response.data[i].id);
@@ -74,7 +74,7 @@ window.addEventListener("load", function () {
         btnDelete.setAttribute("class", "btn btn-danger mx-1");
         btnDelete.setAttribute("type", "button");
         btnDelete.setAttribute("data-bs-toggle", "modal");
-        btnDelete.setAttribute("data-bs-target", "#modalDeleteProject");
+        btnDelete.setAttribute("data-bs-target", "#modalProjectDelete");
         btnDelete.setAttribute("data-id", response.data[i].id);
         btnDelete.innerHTML = "DELETE";
 
@@ -124,9 +124,9 @@ formAddProject.addEventListener("submit", function (event) {
   xhr.addEventListener("load", function () {
     if (xhr.status === 201) {
       // reset form, hide modal and reload
-      const modalAddProject = document.getElementById("modalAddProject");
+      const modalProjectAdd = document.getElementById("modalProjectAdd");
       const modalBoostrapAdd =
-        bootstrap.Modal.getOrCreateInstance(modalAddProject);
+        bootstrap.Modal.getOrCreateInstance(modalProjectAdd);
 
       formAddProject.reset();
       modalBoostrapAdd.toggle();
@@ -149,8 +149,8 @@ formAddProject.addEventListener("submit", function (event) {
 let projectId;
 
 // get value from button edit
-const modalEditProject = document.getElementById("modalEditProject");
-modalEditProject.addEventListener("shown.bs.modal", function (event) {
+const modalProjectEdit = document.getElementById("modalProjectEdit");
+modalProjectEdit.addEventListener("shown.bs.modal", function (event) {
   event.preventDefault();
   const editProjectTitle = document.getElementById("editProjectTitle");
   const editProjectDesc = document.getElementById("editProjectDesc");
@@ -189,7 +189,7 @@ formEditProject.addEventListener("submit", function (event) {
   xhr.addEventListener("load", function () {
     if (xhr.status === 200) {
       const modalBoostrapEdit =
-        bootstrap.Modal.getOrCreateInstance(modalEditProject);
+        bootstrap.Modal.getOrCreateInstance(modalProjectEdit);
       modalBoostrapEdit.toggle();
       window.location.reload();
     } else {
@@ -208,15 +208,15 @@ formEditProject.addEventListener("submit", function (event) {
 });
 
 // get value from button delete
-const modalDeleteProject = document.getElementById("modalDeleteProject");
-modalDeleteProject.addEventListener("shown.bs.modal", function (event) {
+const modalProjectDelete = document.getElementById("modalProjectDelete");
+modalProjectDelete.addEventListener("shown.bs.modal", function (event) {
   event.preventDefault();
   projectId = event.relatedTarget.attributes["data-id"].value;
 });
 
 // delete project
-const btnDeleteProject = document.getElementById("btnDeleteProject");
-btnDeleteProject.addEventListener("click", function (event) {
+const btnProjectDelete = document.getElementById("btnProjectDelete");
+btnProjectDelete.addEventListener("click", function (event) {
   event.preventDefault();
 
   const xhr = new XMLHttpRequest();
@@ -224,7 +224,7 @@ btnDeleteProject.addEventListener("click", function (event) {
   xhr.addEventListener("load", function () {
     if (xhr.status === 200) {
       const modalBoostrapDelete =
-        bootstrap.Modal.getOrCreateInstance(modalDeleteProject);
+        bootstrap.Modal.getOrCreateInstance(modalProjectDelete);
       modalBoostrapDelete.toggle();
       window.location.reload();
     } else {
