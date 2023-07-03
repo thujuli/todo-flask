@@ -119,8 +119,7 @@ def update_task(id):
         - Lakukan validasi untuk user, hanya dapat menggunakan project
           yang dibuatnya saja
         - Dapatkan semua task dari dafter project yang sudah di filter_by id
-        - Dapatkan semua id task yang dibuat current user
-        - Memvalidasi url paramter, hanya dapat mengubah task yang dimiliki user 
+        - Dapatkan semua id task yang dibuat current user Memvalidasi url paramter, hanya dapat mengubah task yang dimiliki user 
     """
 
     # get all projects generated from user
@@ -160,7 +159,6 @@ def update_task(id):
     task.title = title
     task.description = description
     task.project_id = project_id
-    db.session.add(task)
     db.session.commit()
 
     return jsonify({"message": "Task updated successfully"}), 200
@@ -222,3 +220,62 @@ def delete_project(id):
     db.session.commit()
 
     return jsonify({"message": "Task successfully deleted!"}), 200
+
+
+@bp.route("/status/<int:id>", methods=["PUT"])
+@jwt_required()
+def update_status(id):
+    # get request
+    data = request.get_json()
+    is_done = data.get("is_done", None)
+    user_id = get_jwt_identity()
+
+    # handle err when task not found
+    try:
+        task = db.session.execute(db.select(Task).filter_by(id=id)).scalar_one()
+    except NoResultFound:
+        return jsonify({"message": "Task not found!"}), 404
+
+    """
+        Logika untuk user hanya dapat menggunakan task yang dibuatnya
+        - Query Project filter_by user yang login (user_id)
+        - Buat array untuk menampung semua Project yang difilter
+          ambil hanya id saja
+        - Dapatkan semua task dari dafter project yang sudah di filter_by id
+        - Dapatkan semua id task yang dibuat current user Memvalidasi url paramter, hanya dapat mengubah task yang dimiliki user 
+    """
+
+    # get all projects generated from user
+    projects = db.session.execute(
+        db.select(Project).filter_by(user_id=user_id)
+    ).scalars()
+
+    # get all ids from projects
+    project_arr = [project.serialize() for project in projects]
+    project_id_all = []
+    for i in range(0, len(project_arr)):
+        project_id_all.append(project_arr[i]["id"])
+
+    # get all tasks from filtered project id
+    task_by_project = []
+    for i in range(0, len(project_id_all)):
+        tasks = db.session.execute(
+            db.select(Task).filter_by(project_id=project_id_all[i])
+        ).scalars()
+        for task_ in tasks:
+            task_by_project.append(task_.serialize())
+
+    # get all id of tasks generated from current
+    task_id_all = []
+    for i in range(0, len(task_by_project)):
+        task_id_all.append(task_by_project[i]["id"])
+
+    # validate url paramter, can't modify the task when the user doesn't have it
+    if id not in task_id_all:
+        return jsonify({"message": "Don't have permission to modify this Task"}), 403
+
+    # updating task.is_done in db
+    task.is_done = is_done
+    db.session.commit()
+
+    return jsonify({"message": "Status updated successfully"}), 200

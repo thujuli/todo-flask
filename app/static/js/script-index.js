@@ -102,6 +102,8 @@ window.addEventListener("load", function () {
         btnDelete.setAttribute("data-id", response[i].id);
         btnDelete.innerHTML = "DELETE";
         btnDone.setAttribute("type", "button");
+        btnDone.setAttribute("data-id", response[i].id);
+        btnDone.setAttribute("data-task-done", response[i].is_done);
 
         // Append Child
         btnWrap.appendChild(btnEdit);
@@ -124,14 +126,41 @@ window.addEventListener("load", function () {
         }
         // logic for finish and unfinish the task
         if (response[i].is_done) {
-          btnDone.setAttribute("class", "btn btn-warning mx-1");
+          btnDone.setAttribute("class", "btn btn-warning mx-1 btn-done");
           btnDone.innerHTML = "UNFINISH";
           doneItem.append(cardWrap);
         } else {
-          btnDone.setAttribute("class", "btn btn-success mx-1");
+          btnDone.setAttribute("class", "btn btn-success mx-1 btn-done");
           btnDone.innerHTML = "FINISH";
           todoItem.append(cardWrap);
         }
+      }
+
+      const btnDone = document.getElementsByClassName("btn-done");
+      for (let i = 0; i < btnDone.length; i++) {
+        btnDone[i].addEventListener("click", function (event) {
+          event.preventDefault();
+          const id = JSON.parse(this.dataset.id);
+          const taskDone = this.dataset.taskDone === "true";
+
+          const data = JSON.stringify({
+            is_done: !taskDone,
+          });
+
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", `${BASE_URL}/api/tasks/status/${id}`);
+          xhr.addEventListener("load", function () {
+            if (xhr.status === 200) {
+              window.location.reload();
+            }
+          });
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.setRequestHeader(
+            "Authorization",
+            "Bearer " + localStorage.getItem("accessToken")
+          );
+          xhr.send(data);
+        });
       }
     }
   });
