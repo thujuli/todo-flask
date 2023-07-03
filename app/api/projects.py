@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError, NoResultFound
 from app import db
 from app.models.project import Project
 
@@ -92,7 +92,10 @@ def delete_project(id):
         return jsonify({"message": "Don't have permission to modify this Project"}), 403
 
     # delete data in db
-    db.session.delete(project)
-    db.session.commit()
+    try:
+        db.session.delete(project)
+        db.session.commit()
+    except IntegrityError:
+        return jsonify({"message": "Project is used! cannot be deleted"}), 422
 
     return jsonify({"message": "Project deleted successfully!"}), 200

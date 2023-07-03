@@ -111,6 +111,7 @@ formAddProject.addEventListener("submit", function (event) {
   if (!addProjectTitle) {
     toastBodyAdd.innerHTML = "Title is required!";
     toastBootstrapAdd.show();
+    return;
   }
 
   const data = JSON.stringify({
@@ -131,7 +132,8 @@ formAddProject.addEventListener("submit", function (event) {
       modalBoostrapAdd.toggle();
       window.location.reload();
     } else {
-      toastBodyAdd.innerHTML = "Oops! Something went wrong";
+      const response = JSON.parse(xhr.responseText);
+      toastBodyAdd.innerHTML = response.message;
       toastBootstrapAdd.show();
     }
   });
@@ -170,6 +172,7 @@ formEditProject.addEventListener("submit", function (event) {
   if (!editProjectTitle.value) {
     toastBodyEdit.innerHTML = "Title is required!";
     toastBootstrapEdit.show();
+    return;
   }
 
   const data = JSON.stringify({
@@ -187,7 +190,8 @@ formEditProject.addEventListener("submit", function (event) {
       modalBoostrapEdit.toggle();
       window.location.reload();
     } else {
-      toastBodyEdit.innerHTML = "Oops! Something went wrong";
+      const response = JSON.parse(xhr.responseText);
+      toastBodyEdit.innerHTML = response.message;
       toastBootstrapEdit.show();
     }
   });
@@ -221,12 +225,13 @@ btnDeleteProject.addEventListener("click", function (event) {
       modalBoostrapDelete.toggle();
       window.location.reload();
     } else {
+      const response = JSON.parse(xhr.responseText);
       const toastLiveDelete = document.getElementById("toastLiveDelete");
       const toastBodyDelete = document.getElementById("toastBodyDelete");
       const toastBootstrapDelete =
         bootstrap.Toast.getOrCreateInstance(toastLiveDelete);
 
-      toastBodyDelete.innerHTML = "Oops! Something went wrong";
+      toastBodyDelete.innerHTML = response.message;
       toastBootstrapDelete.show();
     }
   });
