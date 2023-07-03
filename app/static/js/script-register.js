@@ -20,41 +20,42 @@ registrationForm.addEventListener("submit", function (event) {
   if (!username || !email || !password || !confirmPassword) {
     toastBodyDanger.innerHTML = "All fields cannot be empty!";
     toastBootstrapDanger.show();
+    return;
   } else if (password != confirmPassword) {
     toastBodyDanger.innerHTML = "Password and Confirm Password does not match!";
     toastBootstrapDanger.show();
-  } else {
-    // get data and turn to json
-    const data = JSON.stringify({
-      username: username,
-      email: email,
-      password: password,
-    });
-    // Initialize ajax
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", BASE_URL + "/api/auth/register");
-
-    xhr.addEventListener("load", function () {
-      if (xhr.status === 200) {
-        // Initialize success toast
-        const toastLiveSuccess = document.getElementById("toastLiveSuccess");
-        const toastBodySuccess = document.getElementById("toastBodySuccess");
-        const toastBootstrapSuccess =
-          bootstrap.Toast.getOrCreateInstance(toastLiveSuccess);
-
-        // show success toast
-        const response = JSON.parse(xhr.responseText);
-        toastBodySuccess.innerHTML = response.message;
-        toastBootstrapSuccess.show();
-      } else {
-        // show danger toast
-        const response = JSON.parse(xhr.responseText);
-        toastBodyDanger.innerHTML = response.message;
-        toastBootstrapDanger.show();
-      }
-    });
-
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(data);
+    return;
   }
+  // get data and turn to json
+  const data = JSON.stringify({
+    username: username,
+    email: email,
+    password: password,
+  });
+  // Initialize ajax
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", BASE_URL + "/api/auth/register");
+
+  xhr.addEventListener("load", function () {
+    if (xhr.status === 200) {
+      // Initialize success toast
+      const toastLiveSuccess = document.getElementById("toastLiveSuccess");
+      const toastBodySuccess = document.getElementById("toastBodySuccess");
+      const toastBootstrapSuccess =
+        bootstrap.Toast.getOrCreateInstance(toastLiveSuccess);
+
+      // show success toast
+      const response = JSON.parse(xhr.responseText);
+      toastBodySuccess.innerHTML = response.message;
+      toastBootstrapSuccess.show();
+    } else {
+      // show danger toast
+      const response = JSON.parse(xhr.responseText);
+      toastBodyDanger.innerHTML = response.message;
+      toastBootstrapDanger.show();
+    }
+  });
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(data);
 });

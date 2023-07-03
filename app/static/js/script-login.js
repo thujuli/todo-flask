@@ -18,29 +18,30 @@ loginForm.addEventListener("submit", function (event) {
   if (!email || !password) {
     toastBodyDanger.innerHTML = "Email and Password is required!";
     toastBootstrapDanger.show();
-  } else {
-    const data = JSON.stringify({
-      email: email,
-      password: password,
-    });
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", BASE_URL + "/api/auth/login");
-
-    xhr.addEventListener("load", function () {
-      if (xhr.status === 200) {
-        // get access token and store to local storage
-        const response = JSON.parse(xhr.responseText);
-        localStorage.setItem("accessToken", response.access_token);
-        window.location.replace(BASE_URL);
-      } else {
-        const response = JSON.parse(xhr.responseText);
-        toastBodyDanger.innerHTML = response.message;
-        toastBootstrapDanger.show();
-      }
-    });
-
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(data);
+    return;
   }
+
+  const data = JSON.stringify({
+    email: email,
+    password: password,
+  });
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", BASE_URL + "/api/auth/login");
+
+  xhr.addEventListener("load", function () {
+    if (xhr.status === 200) {
+      // get access token and store to local storage
+      const response = JSON.parse(xhr.responseText);
+      localStorage.setItem("accessToken", response.access_token);
+      window.location.replace(BASE_URL);
+    } else {
+      const response = JSON.parse(xhr.responseText);
+      toastBodyDanger.innerHTML = response.message;
+      toastBootstrapDanger.show();
+    }
+  });
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.send(data);
 });
