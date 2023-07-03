@@ -122,24 +122,75 @@ window.addEventListener("load", function () {
   xhr.send();
 });
 
-// is another bug
+// show add modal and fill option value
 const modalAddTask = document.getElementById("modalAddTask");
-const selectProject = document.getElementById("selectProject");
+let firstTime = true;
 modalAddTask.addEventListener("shown.bs.modal", function (event) {
   event.preventDefault();
-  const projects = JSON.parse(localStorage.getItem("projects")).data;
-  for (let i = 0; i < projects.length; i++) {
-    const option = document.createElement("option");
-    option.setAttribute("value", projects[i].id);
-    option.text = projects[i].title;
 
-    selectProject.options.add(option);
+  const selectProject = document.getElementById("selectProject");
+  const projects = JSON.parse(localStorage.getItem("projects")).data;
+
+  // event tiggered just first click
+  if (firstTime) {
+    firstTime = false;
+    for (let i = 0; i < projects.length; i++) {
+      const option = document.createElement("option");
+      option.setAttribute("value", projects[i].id);
+      option.text = projects[i].title;
+
+      selectProject.options.add(option);
+    }
   }
 });
 
 const formAddTask = document.getElementById("formAddTask");
 formAddTask.addEventListener("submit", function (event) {
   event.preventDefault();
+  const addTaskTitle = document.getElementById("addTaskTitle").value;
+  const selectProject = document.getElementById("selectProject").value;
+  const addTaskDesc = document.getElementById("addTaskDesc").value;
+
+  const toastLiveAdd = document.getElementById("toastLiveAdd");
+  const toastBodyAdd = document.getElementById("toastBodyAdd");
+  const toastBootstrapAdd = bootstrap.Toast.getOrCreateInstance(toastLiveAdd);
+
+  if (!addTaskTitle || !selectProject) {
+    toastBodyAdd.innerHTML = "Title and Select Project cannot be empty!";
+    toastBootstrapAdd.show();
+    return;
+  }
+
+  const data = JSON.stringify({
+    title: addTaskTitle,
+    project_id: parseInt(selectProject),
+    description: addTaskDesc,
+  });
+
+  console.log(data);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", BASE_URL + "/api/tasks");
+  xhr.addEventListener("load", function () {
+    if (xhr.status === 201) {
+      const modalBoostrapAdd =
+        bootstrap.Modal.getOrCreateInstance(modalAddTask);
+
+      formAddTask.reset();
+      modalBoostrapAdd.toggle();
+      window.location.reload();
+    } else {
+      const response = JSON.parse(xhr.responseText);
+      toastBodyAdd.innerHTML = response.message;
+      toastBootstrapAdd.show();
+    }
+  });
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader(
+    "Authorization",
+    "Bearer " + localStorage.getItem("accessToken")
+  );
+  xhr.send(data);
 });
 
 // time func
