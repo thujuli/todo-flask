@@ -2,11 +2,8 @@
 content %}
 <!-- section select-project start -->
 <section class="container mt-5">
-  <select class="form-select" aria-label="Default select example">
+  <select class="form-select" id="selectProject">
     <option value="">Select Project</option>
-    <option value="1">One</option>
-    <option value="2">Two</option>
-    <option value="3">Three</option>
   </select>
 </section>
 <!-- section select-project end -->
@@ -16,28 +13,6 @@ content %}
   <div class="row">
     <div class="col card pt-3 px-3 mx-3" id="todoItem">
       <h2>TODO</h2>
-      <!-- <div class="d-flex flex-column"> -->
-      <!--   <div class="card mb-3"> -->
-              <!-- <div class="card-header d-flex justify-content-between p-2"> -->
-              <!--   <h5 class="mb-0">Featured</h5> -->
-              <!--   <h5 class="badge text-bg-info mb-0">Project A</h5> -->
-      <!--     <div class="card-body"> -->
-      <!--       <p class="card-text"> -->
-      <!--         With supporting text below as a natural lead-in to additional -->
-      <!--         content. -->
-      <!--       </p> -->
-      <!--       <div class="d-grid gap-2 d-md-block"> -->
-      <!--         <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalEditTask"> -->
-      <!--           EDIT -->
-      <!--         </button> -->
-      <!--         <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#modalDeleteTask"> -->
-      <!--           DELETE -->
-      <!--         </button> -->
-      <!--         <button class="btn btn-success" type="button">DONE</button> -->
-      <!--       </div> -->
-      <!--     </div> -->
-      <!--   </div> -->
-      <!-- </div> -->
     </div>
     <div class="col card pt-3 px-3 mx-3" id="doneItem">
       <h2>DONE</h2>
@@ -88,7 +63,7 @@ content %}
             <input type="text" class="form-control" id="addTaskTitle" />
           </div>
           <div class="mb-3">
-            <select class="form-select" id="selectProject">
+            <select class="form-select" id="selectProjectAdd">
               <option value="">Select Project</option>
             </select>
           </div>
@@ -146,7 +121,7 @@ content %}
             <input type="text" class="form-control" id="editTaskTitle" />
           </div>
           <div class="mb-3">
-            <select class="form-select" id="editSelectedProject">
+            <select class="form-select" id="selectProjectEdit">
               <option value="">Select Project</option>
             </select>
           </div>
