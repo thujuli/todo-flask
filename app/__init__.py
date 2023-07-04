@@ -1,23 +1,20 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
-from config import Config
+from config import DevelopmentConfig, StagingConfig
 
 
 db = SQLAlchemy()
-migrate = Migrate()
 jwt = JWTManager()
 
 
-def create_app(class_config=Config):
+def create_app(class_config=StagingConfig):
     # initialize and configure app
     app = Flask(__name__)
     app.config.from_object(class_config)
 
     # initialize db and migration
     db.init_app(app)
-    migrate.init_app(app, db)
 
     # initialize jwt
     jwt.init_app(app)
@@ -30,5 +27,8 @@ def create_app(class_config=Config):
     app.register_blueprint(projects.bp)
     app.register_blueprint(tasks.bp)
     app.register_blueprint(views.bp)
+
+    with app.app_context():
+        db.create_all()
 
     return app
