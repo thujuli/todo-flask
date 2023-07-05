@@ -1,15 +1,15 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
-from config import DevelopmentConfig, StagingConfig
 from flask_cors import CORS
+from config import Config
 
 
 db = SQLAlchemy()
 jwt = JWTManager()
 
 
-def create_app(class_config=DevelopmentConfig):
+def create_app(class_config=Config):
     # initialize and configure app
     app = Flask(__name__)
     CORS(app)
