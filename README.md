@@ -79,11 +79,49 @@ And for deployment is use Docker and Docker Compose.
     └── restore.sh
 ```
 
+## Features
+
+#### Registration Page
+
+![Registration Page](images/registration-page.png?raw=true "Registration Page")
+
+#### Login Page
+
+![Login Page](images/login-page.png?raw=true "Login Page")
+
+#### Project Page
+
+- List of projects
+  ![List of project](images/projects-list.png?raw=true "List of project")
+- Added new project
+  ![Added new project](images/project-add.png?raw=true "Added new project")
+- Edit project
+  ![Edit Project](images/project-edit.png?raw=true "Edit Project")
+- Delete project
+  ![Delete Project](images/project-delete.png?raw=true "Delete Project")
+
+#### Todo Page (Home)
+
+- List of tasks
+  ![List of tasks](images/tasks-list.png?raw=true "List of tasks")
+- Tasks filtered by selected project
+  ![Tasks filtered by selected project](images/tasks-filter.png?raw=true "Tasks filtered by selected project")
+- Added new task
+  ![Added new task](images/task-add.png?raw=true "Added new task")
+- Edit task
+  ![Edit task](images/task-edit.png?raw=true "Edit task")
+- Delete task
+  ![Delete task](images/task-delete.png?raw=true "Delete task")
+
 ## Setup Project
 
 - Clone this repository
 
 ```
+# clone using ssh
+git clone git@github.com:thujuli/todo-flask.git
+
+#clone using https
 git clone https://github.com/thujuli/todo-flask.git
 ```
 
@@ -123,54 +161,8 @@ python run.py
 
 ##### With Docker Compose
 
-- Clone this repository
-
-```
-git clone https://github.com/thujuli/todo-flask.git
-```
-
-- Change directory to this repository
-
-```
-cd todo-flask
-```
-
 - Run docker compose
 
 ```
 docker compose up -d
 ```
-
-## Features
-
-#### Registration Page
-
-![Registration Page](images/registration-page.png?raw=true "Registration Page")
-
-#### Login Page
-
-![Login Page](images/login-page.png?raw=true "Login Page")
-
-#### Project Page
-
-- List of projects
-  ![List of project](images/projects-list.png?raw=true "List of project")
-- Added new project
-  ![Added new project](images/project-add.png?raw=true "Added new project")
-- Edit project
-  ![Edit Project](images/project-edit.png?raw=true "Edit Project")
-- Delete project
-  ![Delete Project](images/project-delete.png?raw=true "Delete Project")
-
-#### Todo Page (Home)
-
-- List of tasks
-  ![List of tasks](images/tasks-list.png?raw=true "List of tasks")
-- Tasks filtered by selected project
-  ![Tasks filtered by selected project](images/tasks-filter.png?raw=true "Tasks filtered by selected project")
-- Added new task
-  ![Added new task](images/task-add.png?raw=true "Added new task")
-- Edit task
-  ![Edit task](images/task-edit.png?raw=true "Edit task")
-- Delete task
-  ![Delete task](images/task-delete.png?raw=true "Delete task")
