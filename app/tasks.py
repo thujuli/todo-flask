@@ -2,8 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy.exc import NoResultFound
 from app import db
-from app.models.task import Task
-from app.models.project import Project
+from app.models import Task, Project
 
 bp = Blueprint("task", __name__, url_prefix="/api/tasks")
 

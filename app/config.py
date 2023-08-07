@@ -1,9 +1,10 @@
 import os
 from datetime import timedelta
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+CURRENT_DIR = os.path.dirname(__file__)
+PARENT_DIR = os.path.abspath(os.path.dirname(CURRENT_DIR))
 
-DB_URI = "sqlite:///" + os.path.join(BASE_DIR, "data.db")
+DB_URI = "sqlite:///" + os.path.join(PARENT_DIR, "data.db")
 
 
 class Config:

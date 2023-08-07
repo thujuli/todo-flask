@@ -29,47 +29,41 @@ And for deployment is use Docker and Docker Compose.
 ```
 .
 ├── app (main package for flask)
-│   ├── api (python package to handle API endpoints)
-│   │   ├── auth.py
-│   │   ├── projects.py
-│   │   └── tasks.py
+│   ├── auth.py (API endpoints for auth)
+│   ├── config.py (config for database and jwt token)
 │   ├── __init__.py (initialization flask app)
-│   ├── main (handle routes for frontend service)
-│   │   └── views.py
-│   ├── models (contains table structures and relationships)
-│   │   ├── project.py
-│   │   ├── task.py
-│   │   ├── token_blocklist.py
-│   │   └── user.py
-│   ├── static (contains the static file (css/js) used by frontend)
+│   ├── models.py (contains table structures and relationships)
+│   ├── projects.py (API endpoints for projects)
+│   ├── static (contains the static file (css/js))
 │   │   └── js
 │   │       ├── script-index.js
 │   │       ├── script-login.js
 │   │       ├── script-project.js
 │   │       └── script-register.js
-│   └── templates (contains the html files used by frontend)
-│       ├── auth
-│       │   ├── base.html
-│       │   ├── login.html
-│       │   └── register.html
-│       ├── base.html
-│       ├── index.html
-│       └── project.html
-├── config.py (config file for database and jwt token)
+│   ├── tasks.py (API endpoints for tasks)
+│   ├── templates (contains the html files)
+│   │   ├── auth
+│   │   │   ├── base.html
+│   │   │   ├── login.html
+│   │   │   └── register.html
+│   │   ├── base.html
+│   │   ├── index.html
+│   │   └── project.html
+│   └── views.py (route for rendering templates)
 ├── docker-compose.yml (deploy flask and postgres services)
 ├── Dockerfile (create a flask custom images)
 ├── images (list images for documentation)
-│   ├── login-page.png
-│   ├── project-add.png
-│   ├── project-delete.png
-│   ├── project-edit.png
-│   ├── projects-list.png
-│   ├── registration-page.png
-│   ├── task-add.png
-│   ├── task-delete.png
-│   ├── task-edit.png
-│   ├── tasks-filter.png
-│   └── tasks-list.png
+│   ├── login-page.png
+│   ├── project-add.png
+│   ├── project-delete.png
+│   ├── project-edit.png
+│   ├── projects-list.png
+│   ├── registration-page.png
+│   ├── task-add.png
+│   ├── task-delete.png
+│   ├── task-edit.png
+│   ├── tasks-filter.png
+│   └── tasks-list.png
 ├── README.md (documentation file for github)
 ├── requirements.txt (list third party packages used by flask app)
 ├── run.py (python file for running flask app)

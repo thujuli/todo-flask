@@ -7,8 +7,7 @@ from flask_jwt_extended import (
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, jwt
-from app.models.user import User
-from app.models.token_blocklist import TokenBlocklist
+from app.models import User, TokenBlocklist
 
 bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 

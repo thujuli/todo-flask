@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-from config import Config
+from app.config import Config
 
 
 db = SQLAlchemy()
@@ -22,8 +22,7 @@ def create_app(class_config=Config):
     jwt.init_app(app)
 
     # register blueprint
-    from app.api import auth, projects, tasks
-    from app.main import views
+    from app import auth, projects, tasks, views
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(projects.bp)
